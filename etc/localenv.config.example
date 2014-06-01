@@ -1,0 +1,29 @@
+#! /bin/bash
+
+#自分自身のプリフィクス
+export PREFIX=/opt/opap/backup/
+
+#  スナップショット保管用マウントポイント  
+export DIR_SNAPSHOT=/var/snapshots 
+
+#  転送に失敗したスナップショットを保存すする
+export DIR_SNAPSHOT_FAIL=/var/snapshots/fail      
+
+# バックアップイメージ転送用保管フォルダ
+export DIR_BACKUP_SEND=/tmp/backup-send    
+export DIR_BACKUP_RECV=/tmp/backup-recv  
+
+# バックアップ用ログ出力先フォルダ
+export DIR_LOG=/var/log/backup  
+
+# 実行するバイナリのパス
+export BTRFS=/opt/btrfs-progs/btrfs
+
+#リモートサーバーの設定
+export R_SSH_HOST=
+export R_SSH_PORT=
+export R_SSH_PRIVATEKEY=
+
+export R_DIR_BACKUP_RECV=${DIR_BACKUP_RECV}
+export R_PREFIX=${PREFIX}
+
