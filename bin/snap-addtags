@@ -30,8 +30,9 @@ sqlite3 ${DB_FILE} <<EOM
 
 
 CREATE TABLE IF NOT EXISTS snapshot_tags (
-	snapshot_id	INTEGER PRIMARY KEY,
-	tag		TEXT    PRIMARY KEY
+	snapshot_id	INTEGER,
+	tag		TEXT,
+	PRIMARY KEY (snapshot_id, tag)
 );
 
 EOM
