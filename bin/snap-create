@@ -48,7 +48,7 @@ usage_exit() {
 }
 
 version() {
-    echo "${prog} Version ${VERSION}"
+    echo "${SCRIPT_NAME} Version ${VERSION}"
     exit 0
 }
 ######################
@@ -99,7 +99,7 @@ fi
 snap_id=$(${NEWID_CMD})
 if [ $? -ne 0 ]; then
     msg=採番に失敗しました
-    logger -p ${LOG_FACILITY}.err -t ${prog} "${msg}"
+    logger -p ${LOG_FACILITY}.err -t ${SCRIPT_NAME} "${msg}"
     echo ${msg} 1>&2
     exit 1    
 fi
@@ -108,7 +108,7 @@ fi
 ${ADDTAGS_CMD} ${snap_id} $(echo "${tags}" | sed 's/,/ /g')
 if [ $? -ne 0 ]; then
     msg=タグ情報の設定に失敗しました
-    logger -p ${LOG_FACILITY}.err -t ${prog} "${msg}"
+    logger -p ${LOG_FACILITY}.err -t ${SCRIPT_NAME} "${msg}"
     echo ${msg} 1>&2
     exit 1    
 fi
@@ -130,10 +130,10 @@ for mountpoint in $mountpoints; do
     out=`${BTRFS_CMD} subvol snapshot -r ${mountpoint} ${snap} 2>&1`
     exitcode=$?
     if [ $exitcode -eq 0 ] ; then
-        logger -p ${LOG_FACILITY}.info -t ${prog} "${out}"
+        logger -p ${LOG_FACILITY}.info -t ${SCRIPT_NAME} "${out}"
         ${SETSTATUS_CMD} "${snap_id}" "${mountpoint}" "${vol_name}" "${snap}" 0
     else
-        logger -p ${LOG_FACILITY}.err -t ${prog} "${out}"
+        logger -p ${LOG_FACILITY}.err -t ${SCRIPT_NAME} "${out}"
         echo $out 1>&2
         ${SETSTATUS_CMD} "${snap_id}" "${mountpoint}" "${vol_name}" "${snap}" "${exitcode}"
         err_flg=1
