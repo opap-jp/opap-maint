@@ -1,0 +1,130 @@
+#!/bin/bash
+#
+# create-snap
+#
+# Copyright (C) 2014 OPAP-JP contributors.
+#
+# This program is distributed under the MIT License.
+
+
+#####################
+# const and env
+#####################
+
+# 環境変数を読み込む
+
+SCRIPT_DIR="$(dirname -- "$(readlink -f -- "$0")")"
+. ${SCRIPT_DIR}/setenv
+
+# プログラム情報
+
+SCRIPT_NAME=$(basename "$0")
+VERSION="1.0"
+
+USAGE="使用法: ${SCRIPT_NAME} [OPTION] MOUNTPOINT...
+指定したマウントポイントのスナップショットを作成します。
+一度に複数のマウントポイントを指定することができますが、それぞれのスナップショットは順次作成されるため、アトミックな結果とはなりません。
+
+オプション:
+  -h                           この使用法を表示します
+  -v                           このプログラムのバージョン情報を表示します
+  --tags[=TAG1,TAG2,...,TAGn]  スナップショットと一緒に記録するタグ
+
+MOUNTPOINTには、スナップショットを作成するbtrfsファイルシステムのマウントポイントを指定します。
+
+"
+# 関連プログラム
+
+NEWID_CMD=${SCRIPTDIR}/snap-newid
+
+
+#####################
+# functions
+#####################
+usage_exit() {
+    echo "${USAGE}" 1>&2
+    exit 1
+}
+
+version() {
+    echo "${prog} Version ${VERSION}"
+    exit 0
+}
+######################
+# main
+######################
+
+# 引数デフォルト値
+mountpoints=""
+tags=""
+
+# 引数解析
+OPT=`getopt -o hv -l help -l version -l tags: -- "$@"`
+if [ $? != 0 ]; then
+    usage_exit
+fi
+eval set -- "$OPT"
+
+while true
+do
+    case $1 in
+    -h | --help)
+        usage_exit
+        ;;
+    -v | --version)
+        version
+        ;;
+    --tags)
+        tags=$2
+        shift 2
+        ;;
+    --)
+        shift
+        break
+        ;;
+    *)
+        usage_exit
+        ;;
+    esac
+done
+
+mountpoints=$@
+if [ "$mountpoints" = "" ]; then
+    usage_exit
+fi
+
+
+# 今回作成するスナップショットの採番を行う
+snap_id=$(${NEWID_CMD})
+if [ $? -ne 0 ]; then
+    msg=採番に失敗しました
+    logger -p ${LOG_FACILITY}.err -t ${prog} "${msg}"
+    echo ${msg} 1>&2
+    exit 1    
+fi
+
+
+# スナップショットを作成する
+err_flg=0
+for mountpoint in $mountpoints; do
+
+    dt=`date +'%Y-%m-%d_%H-%M-%S'`
+    snap_id_fmtd=$(printf "%06d" ${snap_id})
+    mp_name=$(echo $mountpoint | sed 's/\//-/g')
+    snap=${DIR_SNAPSHOT}/${snap_id_fmtd}_${dt}_${mp_name}
+
+    sync
+
+    out=`${BTRFS_CMD} subvol snapshot -r ${mountpoint} ${snap} 2>&1`
+    if [ $? -eq 0 ] ; then
+        logger -p ${LOG_FACILITY}.info -t ${prog} "${out}"
+    else
+        logger -p ${LOG_FACILITY}.err -t ${prog} "${out}"
+        echo $out 1>&2
+        err_flg=1
+    fi
+
+done
+
+exit $err_flg
+

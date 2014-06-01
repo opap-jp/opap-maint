@@ -1,0 +1,12 @@
+#! /bin/bash
+
+
+#リモートサーバーの設定
+export R_SSH_HOST=example.tld
+export R_SSH_PORT=22
+export R_SSH_USER=exampleuser
+export R_SSH_PRIVATEKEY=/path/to/id_rsa
+
+export R_DIR_BACKUP_RECV=/tmp/opap-maint/recv
+export R_PREFIX=/opt/opap-maint
+

@@ -1,0 +1,28 @@
+#! /bin/bash
+
+
+#自分自身のプリフィクス
+export PREFIX=/opt/opap-maint
+
+#  スナップショット保管用マウントポイント  
+export DIR_SNAPSHOT=${PREFIX}/var/snapshots 
+
+#  転送に失敗したスナップショットを保存すする
+export DIR_SNAPSHOT_FAIL=${PREFIX}/var/snapshots/fail      
+
+# バックアップイメージ転送用保管フォルダ
+export DIR_BACKUP_SEND=/tmp/opap-maint/backup-send    
+export DIR_BACKUP_RECV=/tmp/opap-maint/backup-recv  
+
+# バックアップ用ログ出力先フォルダ
+export DIR_LOG=${PREFIX}/var/log/backup 
+
+# 実行するバイナリのパス
+export BTRFS_CMD=/opt/btrfs-progs/btrfs
+
+# LXC関連
+export LXC_BASE_DIR=/var/lib/lxc
+export LXC_FS=btrfs
+
+# ログ関連
+LOG_FACILITY=local0
