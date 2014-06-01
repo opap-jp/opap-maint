@@ -24,5 +24,8 @@ export BTRFS_CMD=/opt/btrfs-progs/btrfs
 export LXC_BASE_DIR=/var/lib/lxc
 export LXC_FS=btrfs
 
+# データベース
+export DB_FILE=${DIR_SNAPSHOT}/snapshot.db
+
 # ログ関連
-LOG_FACILITY=local0
+export LOG_FACILITY=local0

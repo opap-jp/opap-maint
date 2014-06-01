@@ -35,8 +35,9 @@ MOUNTPOINTには、スナップショットを作成するbtrfsファイルシ�
 "
 # 関連プログラム
 
-NEWID_CMD=${SCRIPTDIR}/snap-newid
-
+NEWID_CMD=${SCRIPT_DIR}/snap-newid
+ADDTAGS_CMD=${SCRIPT_DIR}/snap-addtags
+SETSTATUS_CMD=${SCRIPT_DIR}/snap-setstatus
 
 #####################
 # functions
@@ -103,6 +104,15 @@ if [ $? -ne 0 ]; then
     exit 1    
 fi
 
+# タグ情報を設定する
+${ADDTAGS_CMD} ${snap_id} $(echo "${tags}" | sed 's/,/ /g')
+if [ $? -ne 0 ]; then
+    msg=タグ情報の設定に失敗しました
+    logger -p ${LOG_FACILITY}.err -t ${prog} "${msg}"
+    echo ${msg} 1>&2
+    exit 1    
+fi
+
 
 # スナップショットを作成する
 err_flg=0
@@ -110,19 +120,26 @@ for mountpoint in $mountpoints; do
 
     dt=`date +'%Y-%m-%d_%H-%M-%S'`
     snap_id_fmtd=$(printf "%06d" ${snap_id})
-    mp_name=$(echo $mountpoint | sed 's/\//-/g')
-    snap=${DIR_SNAPSHOT}/${snap_id_fmtd}_${dt}_${mp_name}
+    vol_name=$(echo $mountpoint | sed 's/\//-/g')
+    snap=${DIR_SNAPSHOT}/${snap_id_fmtd}_${dt}_${vol_name}
+
+    ${SETSTATUS_CMD} "${snap_id}" "${mountpoint}" "${vol_name}" "${snap}" -1
 
     sync
 
     out=`${BTRFS_CMD} subvol snapshot -r ${mountpoint} ${snap} 2>&1`
-    if [ $? -eq 0 ] ; then
+    exitcode=$?
+    if [ $exitcode -eq 0 ] ; then
         logger -p ${LOG_FACILITY}.info -t ${prog} "${out}"
+        ${SETSTATUS_CMD} "${snap_id}" "${mountpoint}" "${vol_name}" "${snap}" 0
     else
         logger -p ${LOG_FACILITY}.err -t ${prog} "${out}"
         echo $out 1>&2
+        ${SETSTATUS_CMD} "${snap_id}" "${mountpoint}" "${vol_name}" "${snap}" "${exitcode}"
         err_flg=1
     fi
+
+    sync
 
 done
 

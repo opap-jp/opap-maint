@@ -20,9 +20,13 @@ VERSION="1.0"
 sqlite3 ${DB_FILE} <<EOM
 
 
-CREATE TABLE IF NOT EXISTS snapshots (
-	id		INTEGER PRIMARY KEY AUTOINCREMENT,
-	ins_timestamp	TIMESTAMP
+CREATE TABLE IF NOT EXISTS snapshot_status (
+	snapshot_id	INTEGER PRIMARY KEY,
+	mount_point	TEXT    PRIMARY KEY,
+	vol_name	TEXT,
+	snapshot_path	TEXT,
+	status		INTEGER,
+	up_timestamp	TIMESTAMP
 );
 
 EOM
@@ -35,17 +39,25 @@ sqlite3 ${DB_FILE} <<EOM
 
 BEGIN;
 
-INSERT INTO snapshots
-(	
-	ins_timestamp
+INSERT OR REPLACE INTO snapshots
+(
+	snapshot_id,	
+	mount_point, 
+	vol_name,
+	snapshot_path,
+	status,
+	up_timestamp
 ) 
 VALUES 
 (
+	$1,
+	'$2',
+	'$3',
+	'$4',
+	$5,
 	CURRENT_TIMESTAMP
 );
 
-SELECT MAX(id) 
-FROM snapshots;
 
 END;
 
