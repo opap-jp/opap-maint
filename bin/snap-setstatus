@@ -40,7 +40,7 @@ sqlite3 ${DB_FILE} <<EOM
 
 BEGIN;
 
-INSERT OR REPLACE INTO snapshots
+INSERT OR REPLACE INTO snapshot_status
 (
 	snapshot_id,	
 	mount_point, 
