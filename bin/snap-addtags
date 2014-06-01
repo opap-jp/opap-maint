@@ -56,7 +56,7 @@ WHERE snapshot_id = ${snap_id}
 INSERT INTO snapshot_tags
 (	
 	snapshot_id, 
-	tag, 
+	tag
 ) 
 VALUES 
 (
