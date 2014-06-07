@@ -105,12 +105,14 @@ if [ $? -ne 0 ]; then
 fi
 
 # タグ情報を設定する
-${ADDTAGS_CMD} ${snap_id} $(echo "${tags}" | sed 's/,/ /g')
-if [ $? -ne 0 ]; then
-    msg=タグ情報の設定に失敗しました
-    logger -p ${LOG_FACILITY}.err -t ${SCRIPT_NAME} "${msg}"
-    echo ${msg} 1>&2
-    exit 1    
+if [ "${tags}" != "" ]; then
+    ${ADDTAGS_CMD} ${snap_id} $(echo "${tags}" | sed 's/,/ /g')
+    if [ $? -ne 0 ]; then
+        msg=タグ情報の設定に失敗しました
+        logger -p ${LOG_FACILITY}.err -t ${SCRIPT_NAME} "${msg}"
+        echo ${msg} 1>&2
+        exit 1    
+    fi
 fi
 
 
