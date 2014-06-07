@@ -1,0 +1,112 @@
+#!/bin/bash
+
+# 環境変数を読み込む
+
+SCRIPT_DIR="$(dirname -- "$(readlink -f -- "$0")")"
+. ${SCRIPT_DIR}/setenv
+
+# プログラム情報
+
+SCRIPT_NAME=$(basename "$0")
+VERSION="1.0"
+
+
+
+
+######################
+# main
+######################
+
+# 引数デフォルト値
+opt_inc_del=0
+opt_id=""
+opt_tags=""
+opt_status=""
+opt_where=""
+
+# 引数解析
+OPT=`getopt -o hvd -l help -l version -l include-deleted -l id: -l tags: -l status: -l where:  -- "$@"`
+#if [ $? != 0 ]; then
+#    usage_exit
+#fi
+eval set -- "$OPT"
+
+while true
+do
+    case $1 in
+    -h | --help)
+        usage_exit
+        ;;
+    -v | --version)
+        version
+        ;;
+    --id)
+        opt_id=$2
+        shift 2
+        ;;
+    --tags)        
+	opt_tags=$2
+        shift 2
+        ;;
+    --status)
+        opt_status=$2
+        shift 2
+        ;;
+    --include-deleted)
+        opt_inc_del=1
+        shift
+        ;;
+    --) 
+        shift
+        break
+        ;;
+    *)
+        usage_exit
+        ;;
+    esac
+done
+
+
+where_exp=" (1 = 1) "
+
+if [ "$opt_id" != "" ]; then
+    where_exp="$where_exp AND (s.id IN ($opt_id)) "
+fi
+
+if [ "$opt_tags" != "" ]; then
+    opt_tags_lst=\'$(echo "$opt_tags" | sed s/,/\',\'/g )\'
+    where_exp="$where_exp AND ((s.id) IN (SELECT id FROM snapshot_tags WHERE tag IN ($opt_tags_lst))) "
+fi
+
+if [ "$opt_status" != "" ]; then                        
+    where_exp="$where_exp AND ((ss.status) IN ($opt_status)) "    
+fi
+
+if [ "$opt_inc_del" -ne 1 ]; then
+    where_exp="$where_exp AND ((ss.status) <> 9)"
+fi
+
+if [ "$opt_where" != "" ]; then
+    where_exp="$where_exp AND ( $opt_where )"
+fi
+
+
+sqlite3 -separator $'\t' ${DB_FILE} <<EOM
+
+SELECT 
+    s.id,
+    ss.mount_point,
+    ss.vol_name,
+    ss.snapshot_path,
+    ss.status
+FROM snapshots s
+INNER JOIN snapshot_status ss
+    ON s.id = ss.snapshot_id
+WHERE ${where_exp}
+ORDER BY s.id, ss.mount_point
+;
+
+EOM
+
+exit $?
+

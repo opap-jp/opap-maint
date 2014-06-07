@@ -12,29 +12,10 @@ VERSION="1.0"
 
 
 
-
 ######################
 # 主処理
 ######################
 
-sqlite3 ${DB_FILE} <<EOM
-
-
-CREATE TABLE IF NOT EXISTS snapshot_status (
-	snapshot_id	INTEGER,
-	mount_point	TEXT,
-	vol_name	TEXT,
-	snapshot_path	TEXT,
-	status		INTEGER,
-	up_timestamp	TIMESTAMP,
-	PRIMARY KEY (snapshot_id, mount_point)
-);
-
-EOM
-
-if [ $? -ne 0 ]; then
-	exit 1
-fi
 
 sqlite3 ${DB_FILE} <<EOM
 

@@ -1,0 +1,112 @@
+#!/bin/bash
+#
+# create-snap
+#
+# Copyright (C) 2014 OPAP-JP contributors.
+#
+# This program is distributed under the MIT License.
+
+
+#####################
+# const and env
+#####################
+
+# 環境変数を読み込む
+
+SCRIPT_DIR="$(dirname -- "$(readlink -f -- "$0")")"
+. ${SCRIPT_DIR}/setenv
+
+# プログラム情報
+
+SCRIPT_NAME=$(basename "$0")
+VERSION="1.0"
+
+USAGE="使用法: ${SCRIPT_NAME} [OPTION] SNAPSHOT_ID...
+指定したIDのスナップショットを削除します。
+
+オプション:
+  -h                           この使用法を表示します
+  -v                           このプログラムのバージョン情報を表示します
+
+
+"
+# 関連プログラム
+
+SETSTATUS_CMD=${SCRIPT_DIR}/snap-setstatus
+LS_CMD=${SCRIPT_DIR}/snap-ls
+
+#####################
+# functions
+#####################
+usage_exit() {
+    echo "${USAGE}" 1>&2
+    exit 1
+}
+
+version() {
+    echo "${SCRIPT_NAME} Version ${VERSION}"
+    exit 0
+}
+######################
+# main
+######################
+
+# 引数デフォルト値
+target_ids=""
+
+# 引数解析
+OPT=`getopt -o hv -l help -l version -- "$@"`
+if [ $? != 0 ]; then
+    usage_exit
+fi
+eval set -- "$OPT"
+
+while true
+do
+    case $1 in
+    -h | --help)
+        usage_exit
+        ;;
+    -v | --version)
+        version
+        ;;
+    --)
+        shift
+        break
+        ;;
+    *)
+        usage_exit
+        ;;
+    esac
+done
+
+target_ids=$@
+if [ "$target_ids" = "" ]; then
+    usage_exit
+fi
+
+target_ids_lst=$(echo $target_ids | sed 's/\s+/,/g' )
+
+# スナップショットを作成する
+err_flg=0
+${LS_CMD} --id=${target_ids_lst} | while read LINE snap_id mountpoint vol_name snap status; do
+
+
+    sync
+
+    out=$(${BTRFS_CMD} subvol delete ${snap}  2>&1)
+    exitcode=$?
+    if [ $exitcode -eq 0 ] ; then
+        logger -p ${LOG_FACILITY}.info -t ${SCRIPT_NAME} "${out}"
+        ${SETSTATUS_CMD} "${snap_id}" "${mountpoint}" "${vol_name}" "${snap}" 9
+    else
+        logger -p ${LOG_FACILITY}.err -t ${SCRIPT_NAME} "${out}"
+        echo $out 1>&2
+        err_flg=1
+    fi
+
+
+done
+
+exit $err_flg
+

@@ -26,16 +26,6 @@ fi
 
 # DB更新
 
-sqlite3 ${DB_FILE} <<EOM
-
-
-CREATE TABLE IF NOT EXISTS snapshot_tags (
-	snapshot_id	INTEGER,
-	tag		TEXT,
-	PRIMARY KEY (snapshot_id, tag)
-);
-
-EOM
 
 
 snap_id=$1
@@ -69,8 +59,9 @@ END;
 
 EOM
 
-    if [ $? -ne 0 ]; then
-        exit 1
+    exitcd=$?
+    if [ $exitcd -ne 0 ]; then
+        exit $exitcd
     fi
 
     shift

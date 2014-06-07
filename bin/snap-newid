@@ -19,20 +19,6 @@ VERSION="1.0"
 
 sqlite3 ${DB_FILE} <<EOM
 
-
-CREATE TABLE IF NOT EXISTS snapshots (
-	id		INTEGER PRIMARY KEY AUTOINCREMENT,
-	ins_timestamp	TIMESTAMP
-);
-
-EOM
-
-if [ $? -ne 0 ]; then
-	exit 1
-fi
-
-sqlite3 ${DB_FILE} <<EOM
-
 BEGIN;
 
 INSERT INTO snapshots

@@ -120,10 +120,10 @@ for mountpoint in $mountpoints; do
 
     dt=`date +'%Y-%m-%d_%H-%M-%S'`
     snap_id_fmtd=$(printf "%06d" ${snap_id})
-    vol_name=$(echo $mountpoint | sed 's/\//-/g')
+    vol_name=$(echo "$mountpoint" | sed 's/\//@/g')
     snap=${DIR_SNAPSHOT}/${snap_id_fmtd}_${dt}_${vol_name}
 
-    ${SETSTATUS_CMD} "${snap_id}" "${mountpoint}" "${vol_name}" "${snap}" -1
+    ${SETSTATUS_CMD} "${snap_id}" "${mountpoint}" "${vol_name}" "${snap}" NULL
 
     sync
 
@@ -135,7 +135,7 @@ for mountpoint in $mountpoints; do
     else
         logger -p ${LOG_FACILITY}.err -t ${SCRIPT_NAME} "${out}"
         echo $out 1>&2
-        ${SETSTATUS_CMD} "${snap_id}" "${mountpoint}" "${vol_name}" "${snap}" "${exitcode}"
+        ${SETSTATUS_CMD} "${snap_id}" "${mountpoint}" "${vol_name}" "${snap}" 1
         err_flg=1
     fi
 
