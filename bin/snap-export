@@ -87,7 +87,7 @@ if [ "$target_id" = "" ]; then
     usage_exit
 fi
 
-if [ "$output_id" = "" ]; then
+if [ "$output_dir" = "" ]; then
     usage_exit
 fi
 
