@@ -101,7 +101,7 @@ mkdir $temp_dir
 cd $temp_dir
 
 err_flg=0
-${LS_CMD} --id=${target_id} | while read LINE snap_id mountpoint vol_name snap status; do
+${LS_CMD} --id=${target_id} | while read snap_id mountpoint vol_name snap status; do
 
     sync
 
@@ -121,7 +121,7 @@ done
 ${LS_CMD} --id=${target_id} >  info.txt
 
 cd ..
-tar cvzf ${output_dir}/${export_name}.tar.gz ${temp_dir}
+tar cvzf ${output_dir}/${export_name}.tar.gz ${export_name}
 
 if [ $? -ne 0 ] ; then
     err_flg=1

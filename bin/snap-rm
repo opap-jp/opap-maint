@@ -89,7 +89,7 @@ target_ids_lst=$(echo $target_ids | sed 's/\s+/,/g' )
 
 # スナップショットを作成する
 err_flg=0
-${LS_CMD} --id=${target_ids_lst} | while read LINE snap_id mountpoint vol_name snap status; do
+${LS_CMD} --id=${target_ids_lst} | while read snap_id mountpoint vol_name snap status; do
 
 
     sync
