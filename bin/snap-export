@@ -11,25 +11,25 @@
 # const and env
 #####################
 
-# ŠÂ‹«•Ï”‚ğ“Ç‚İ‚Ş
+# ç’°å¢ƒå¤‰æ•°ã‚’èª­ã¿è¾¼ã‚€
 
 SCRIPT_DIR="$(dirname -- "$(readlink -f -- "$0")")"
 . ${SCRIPT_DIR}/setenv
 
-# ƒvƒƒOƒ‰ƒ€î•ñ
+# ãƒ—ãƒ­ã‚°ãƒ©ãƒ æƒ…å ±
 
 SCRIPT_NAME=$(basename "$0")
 VERSION="1.0"
 
-USAGE="g—p–@: ${SCRIPT_NAME} [OPTION] TARGET_ID OUTPUT_DIR
-w’è‚µ‚½ID‚ÌƒXƒiƒbƒvƒVƒ‡ƒbƒg‚ğƒGƒNƒXƒ|[ƒg‚µ‚Ü‚·B
+USAGE="ä½¿ç”¨æ³•: ${SCRIPT_NAME} [OPTION] TARGET_ID OUTPUT_DIR
+æŒ‡å®šã—ãŸIDã®ã‚¹ãƒŠãƒƒãƒ—ã‚·ãƒ§ãƒƒãƒˆã‚’ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆã—ã¾ã™ã€‚
 
-ƒIƒvƒVƒ‡ƒ“:
-  -h                           ‚±‚Ìg—p–@‚ğ•\¦‚µ‚Ü‚·
-  -v                           ‚±‚ÌƒvƒƒOƒ‰ƒ€‚Ìƒo[ƒWƒ‡ƒ“î•ñ‚ğ•\¦‚µ‚Ü‚·
+ã‚ªãƒ—ã‚·ãƒ§ãƒ³:
+  -h                           ã“ã®ä½¿ç”¨æ³•ã‚’è¡¨ç¤ºã—ã¾ã™
+  -v                           ã“ã®ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±ã‚’è¡¨ç¤ºã—ã¾ã™
 
 "
-# ŠÖ˜AƒvƒƒOƒ‰ƒ€
+# é–¢é€£ãƒ—ãƒ­ã‚°ãƒ©ãƒ 
 
 SETSTATUS_CMD=${SCRIPT_DIR}/snap-setstatus
 LS_CMD=${SCRIPT_DIR}/snap-ls
@@ -50,11 +50,11 @@ version() {
 # main
 ######################
 
-# ˆø”ƒfƒtƒHƒ‹ƒg’l
+# å¼•æ•°ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤
 target_id=""
 output_dir=""
 
-# ˆø”‰ğÍ
+# å¼•æ•°è§£æ
 OPT=`getopt -o hv -l help -l version -- "$@"`
 if [ $? != 0 ]; then
     usage_exit
@@ -92,7 +92,7 @@ if [ "$output_id" = "" ]; then
 fi
 
 
-# ƒXƒiƒbƒvƒVƒ‡ƒbƒgƒGƒNƒXƒ|[ƒgˆ—
+# ã‚¹ãƒŠãƒƒãƒ—ã‚·ãƒ§ãƒƒãƒˆã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆå‡¦ç†
 
 export_name=$(hostname)-$(date '+%Y%m%d%H%M%S')-$RANDOM
 temp_dir=/tmp/${export_name}
@@ -132,3 +132,4 @@ rm -rf ${temp_dir}
 readlink -f ${output_dir}/${export_name}.tar.gz
 
 exit $err_flg
+
