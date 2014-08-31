@@ -1,0 +1,9 @@
+#!/bin/bash
+
+export PATH=$PATH:/path/to/opap-maint/bin
+
+target_ids=$(snap-ls --where "s.ins_timestamp <= date('now', '-3 month')" | awk '{print $1}' | uniq | xargs echo)
+
+snap-rm ${target_ids}
+
+

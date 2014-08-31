@@ -127,7 +127,9 @@ SELECT
     ss.mount_point,
     ss.vol_name,
     ss.snapshot_path,
-    ss.status
+    ss.status,
+    s.ins_timestamp,
+    ss.up_timestamp
 FROM snapshots s
 INNER JOIN snapshot_status ss
     ON s.id = ss.snapshot_id

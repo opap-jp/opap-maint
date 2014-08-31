@@ -93,9 +93,15 @@ fi
 
 
 # スナップショットエクスポート処理
-
-export_name=$(hostname)-$(date '+%Y%m%d%H%M%S')-$RANDOM
+target_id=$(printf "%06d" ${target_id})
+export_name=snap_export-$(hostname)-${target_id}
 temp_dir=/tmp/${export_name}
+if [ -e ${temp_dir} ]; then
+    msg=一時フォルダ$temp_dirが既に存在します。もう一度やり直して下さい。
+    logger -p ${LOG_FACILITY}.err -t ${SCRIPT_NAME} "${msg}"
+    echo ${msg} 1>&2
+    exit 1
+fi
 
 mkdir $temp_dir
 cd $temp_dir
@@ -118,7 +124,9 @@ ${LS_CMD} --id=${target_id} | while read snap_id mountpoint vol_name snap status
 done
 
 
-${LS_CMD} --id=${target_id} >  info.txt
+hostname > hostname.txt
+${LS_CMD} --id=${target_id} >  info.tsv
+
 
 cd ..
 tar cvzf ${output_dir}/${export_name}.tar.gz ${export_name}
