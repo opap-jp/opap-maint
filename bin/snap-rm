@@ -85,7 +85,7 @@ if [ "$target_ids" = "" ]; then
     usage_exit
 fi
 
-target_ids_lst=$(echo $target_ids | sed 's/\s+/,/g' )
+target_ids_lst=$(echo $target_ids | sed -r 's/\s+/,/g' )
 
 # スナップショットを削除する
 err_flg=0
